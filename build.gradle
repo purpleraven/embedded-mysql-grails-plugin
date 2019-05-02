@@ -1,0 +1,65 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+    }
+}
+
+version "1.0"
+group "org.grails.plugins"
+
+apply plugin:"idea"
+apply plugin:"org.grails.grails-plugin"
+apply plugin:"org.grails.grails-plugin-publish"
+
+repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/core" }
+    mavenCentral()
+}
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.grails:grails-bom:$grailsVersion"
+    }
+    applyMavenExclusions false
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-logging"
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compile "org.grails:grails-core"
+    compile "org.grails:grails-logging"
+    compile "com.wix:wix-embedded-mysql:4.2.0"
+
+    testCompile "org.grails:grails-plugin-datasource"
+    testCompile "org.grails:grails-testing-support:1.1.4"
+//    testCompile "com.h2database:h2"
+}
+
+bootRun {
+    jvmArgs('-Dspring.output.ansi.enabled=always')
+    addResources = true
+    String springProfilesActive = 'spring.profiles.active'
+    systemProperty springProfilesActive, System.getProperty(springProfilesActive)
+}
+// enable if you wish to package this plugin as a standalone application
+bootRepackage.enabled = false
+grailsPublish {
+    githubSlug = 'purpleraven/embedded-mysql-grails-plugin'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "Ebedded MySQL Plugin"
+    desc = "Plugin allows to use embedded MySQL in application."
+    developers = [purpleraven:"purple raven"]
+}
