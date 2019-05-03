@@ -1,7 +1,10 @@
 package embedded.mysql
 
+import com.wix.mysql.config.MysqldConfig
+import static com.wix.mysql.config.Charset.UTF8;
+
+import static com.wix.mysql.config.MysqldConfig.aMysqldConfig;
 import static com.wix.mysql.EmbeddedMysql.anEmbeddedMysql;
-import static com.wix.mysql.ScriptResolver.classPathScript;
 import static com.wix.mysql.distribution.Version.v5_7_latest;
 import static com.wix.mysql.config.DownloadConfig.aDownloadConfig;
 import static com.wix.mysql.config.ProxyFactory.aHttpProxy;
@@ -39,8 +42,8 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
         }
         for(def entry: config.dataSources) {
             def dataSourceName = "dataSource_${entry.key}"
-            def embeddedName = "embeddedPostgres_${entry.key}"
-            if (entry.value.embeddedPostgres) {
+            def embeddedName = "embeddedMysql_${entry.key}"
+            if (entry.value.embeddedMysqld) {
                 def mysqldDb = startEmbeddedMysql(entry.value, dataSourceName)
                 "$embeddedName"(EmbeddedMysqlHolder, mysqldDb)
             }
@@ -49,37 +52,49 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
 
     private def startEmbeddedMysql(sourceConfig, dataSourceName){
 
-        if(!sourceConfig.embeddedPort){
-            sourceConfig.embeddedPort=SocketUtils.findAvailableTcpPort()
-            log.debug("Embedded MySQL will use DEFAULT port: {}", sourceConfig.embeddedPort)
+        def port = sourceConfig.embeddedPort
+        
+        if (port){
+            port = (int) port.toInteger()
         }
+        
+        if(!port){
+            port = SocketUtils.findAvailableTcpPort()
+        }
+        
+        def username = sourceConfig.username?: 'root'
+        def password = sourceConfig.password?: 'root'
+        def schema = sourceConfig.password?: 'mysql'
 
-        log.info("Embedded MySQL plugin is starting under ${dataSourceName} bean on ${sourceConfig.embeddedPort} port...")
+        log.info("Embedded MySQL plugin is starting under ${dataSourceName} bean on ${port} port...")
 
         if(!sourceConfig.url) {
-            sourceConfig.url="jdbc:mysql://localhost:${sourceConfig.embeddedPort}/mysql?autoReconnect=true&characterEncoding=UTF-8"
+            sourceConfig.url="jdbc:mysql://localhost:${port}/${schema}?autoReconnect=true&characterEncoding=UTF-8"
             log.debug("Embedded MySQL will use DEFAULT url: {}", sourceConfig.url)
         }
-
-        if(!sourceConfig.username)
-            sourceConfig.username='root'
-
-        if(!sourceConfig.password)
-            sourceConfig.password='root'
 
 
         DownloadConfig downloadConfig = aDownloadConfig()
                 .withProxy(aHttpProxy("remote.host", 8080))
                 .withCacheDir(System.getProperty("java.io.tmpdir"))
-                .build();
+                .build()
 
-        EmbeddedMysql mysqld = anEmbeddedMysql(v5_7_latest, downloadConfig)
-                .addSchema("aschema", classPathScript("db/001_init.sql")) //todo create DB???
-                .start(); // todo define port
+        def builder = aMysqldConfig(v5_7_latest)
+                .withCharset(UTF8)
+                .withUser(username, password)
+//                .withTimeZone("Europe/Vilnius")
+//                .withTimeout(2, TimeUnit.MINUTES)
+                .withServerVariable("max_connect_errors", 666)
+                .withPort(port)
 
-//        if(sourceConfig.embeddedPort) {
-//            builder.setPort(sourceConfig.embeddedPort.toInteger())
-//        }
+
+        MysqldConfig config = builder.build()
+
+
+        EmbeddedMysql mysqld = anEmbeddedMysql(config, downloadConfig)
+                .addSchema(schema)
+                .start()
+
         mysqld
     }
 }

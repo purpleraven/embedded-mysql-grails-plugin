@@ -1,19 +1,19 @@
 package embedded.mysql
 
-import embedded.postgres.utils.DriverUtils
+import embedded.mysql.utils.DriverUtils
 import groovy.sql.Sql
 import org.grails.testing.GrailsUnitTest
 import spock.lang.Specification
 
-class EnabledEmbeddedPostgresSpec extends Specification implements GrailsUnitTest {
+class EnabledEmbeddedMysqlSpec extends Specification implements GrailsUnitTest {
 
     Closure doWithConfig() {{ config ->
         config.dataSource.with {
             embeddedPostgres=true
             embeddedPort=56566
-            url='jdbc:postgresql://localhost:56566/mysql'
-            username='mysql'
-            password='mysql'
+            url='jdbc:mysql://localhost:56566/mysql'
+            username='root'
+            password='root'
         }
     }}
 
@@ -21,17 +21,17 @@ class EnabledEmbeddedPostgresSpec extends Specification implements GrailsUnitTes
         ["dataSource",'embeddedPostgres'].toSet()
     }
 
-    def setup() {
-        DriverUtils.refreshPostgres()
-    }
+//    def setup() {
+//        DriverUtils.refreshPostgres()
+//    }
 
     def "Embedded Postgres with custom options"() {
         when:
         def dataSource = applicationContext.getBean('dataSource')
         Sql sql = new Sql(dataSource)
-        String version = sql.rows('SELECT version() as version').first().getProperty('version')
+        String version = sql.rows('SHOW VARIABLES LIKE "%version_comment%"').first().getProperty('Value')
 
         then:
-        version.startsWith('PostgreSQL')
+        version.contains('MySql')
     }
 }

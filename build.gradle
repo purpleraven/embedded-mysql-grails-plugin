@@ -40,6 +40,7 @@ dependencies {
     compile "org.grails:grails-core"
     compile "org.grails:grails-logging"
     compile "com.wix:wix-embedded-mysql:4.2.0"
+    runtime 'mysql:mysql-connector-java:5.1.31'
 
     testCompile "org.grails:grails-plugin-datasource"
     testCompile "org.grails:grails-testing-support:1.1.4"
@@ -54,6 +55,7 @@ bootRun {
 }
 // enable if you wish to package this plugin as a standalone application
 bootRepackage.enabled = false
+
 grailsPublish {
     githubSlug = 'purpleraven/embedded-mysql-grails-plugin'
     license {
