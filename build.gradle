@@ -57,6 +57,8 @@ bootRun {
 bootRepackage.enabled = false
 
 grailsPublish {
+    user = ''
+    key = ''
     githubSlug = 'purpleraven/embedded-mysql-grails-plugin'
     license {
         name = 'Apache-2.0'

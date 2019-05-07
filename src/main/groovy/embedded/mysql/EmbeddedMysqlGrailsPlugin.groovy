@@ -62,9 +62,9 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
             port = SocketUtils.findAvailableTcpPort()
         }
         
-        def username = sourceConfig.username?: 'root'
-        def password = sourceConfig.password?: 'root'
-        def schema = sourceConfig.password?: 'mysql'
+        def username = sourceConfig.username?: 'embedded_db'
+        def password = sourceConfig.password?: 'embedded_db'
+        def schema = sourceConfig.password?: 'embedded_db'
 
         log.info("Embedded MySQL plugin is starting under ${dataSourceName} bean on ${port} port...")
 
@@ -74,10 +74,10 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
         }
 
 
-        DownloadConfig downloadConfig = aDownloadConfig()
-                .withProxy(aHttpProxy("remote.host", 8080))
-                .withCacheDir(System.getProperty("java.io.tmpdir"))
-                .build()
+//        DownloadConfig downloadConfig = aDownloadConfig()
+//                .withProxy(aHttpProxy("remote.host", 8080))
+//                .withCacheDir(System.getProperty("java.io.tmpdir"))
+//                .build()
 
         def builder = aMysqldConfig(v5_7_latest)
                 .withCharset(UTF8)
@@ -91,7 +91,7 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
         MysqldConfig config = builder.build()
 
 
-        EmbeddedMysql mysqld = anEmbeddedMysql(config, downloadConfig)
+        EmbeddedMysql mysqld = anEmbeddedMysql(config/*, downloadConfig*/)
                 .addSchema(schema)
                 .start()
 
