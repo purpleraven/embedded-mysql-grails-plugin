@@ -18,7 +18,7 @@ class EnabledEmbeddedMysqlSpec extends Specification implements GrailsUnitTest {
     }}
 
     Set<String> getIncludePlugins() {
-        ["dataSource",'embeddedPostgres'].toSet()
+        ["dataSource",'embeddedMysql'].toSet()
     }
 
 //    def setup() {
