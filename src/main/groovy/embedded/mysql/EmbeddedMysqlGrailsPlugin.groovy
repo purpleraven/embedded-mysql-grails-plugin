@@ -1,6 +1,9 @@
 package embedded.mysql
 
 import com.wix.mysql.config.MysqldConfig
+
+import java.util.concurrent.TimeUnit
+
 import static com.wix.mysql.config.Charset.UTF8;
 
 import static com.wix.mysql.config.MysqldConfig.aMysqldConfig;
@@ -61,16 +64,25 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
         if(!port){
             port = SocketUtils.findAvailableTcpPort()
         }
-        
-        def username = sourceConfig.username?: 'embedded_db'
-        def password = sourceConfig.password?: 'embedded_db'
-        def schema = sourceConfig.password?: 'embedded_db'
 
-        log.info("Embedded MySQL plugin is starting under ${dataSourceName} bean on ${port} port...")
+        if (!sourceConfig.username){
+            sourceConfig.username = 'embedded_db'
+        }
+        
+        def username = sourceConfig.username
+
+        if (!sourceConfig.password){
+            sourceConfig.password = 'embedded_db'
+        }
+
+        def password = sourceConfig.password
+        def schema = sourceConfig.schema?: 'embedded_db'
+
+        log.error("Embedded MySQL plugin is starting under ${dataSourceName} bean on ${port} port...")
 
         if(!sourceConfig.url) {
-            sourceConfig.url="jdbc:mysql://localhost:${port}/${schema}?autoReconnect=true&characterEncoding=UTF-8"
-            log.debug("Embedded MySQL will use DEFAULT url: {}", sourceConfig.url)
+            sourceConfig.url="jdbc:mysql://localhost:${port}/${schema}?autoReconnect=true&characterEncoding=UTF-8&useSSL=false"
+            log.error("Embedded MySQL will use DEFAULT url: {}", sourceConfig.url)
         }
 
 
@@ -83,7 +95,7 @@ class EmbeddedMysqlGrailsPlugin extends Plugin {
                 .withCharset(UTF8)
                 .withUser(username, password)
 //                .withTimeZone("Europe/Vilnius")
-//                .withTimeout(2, TimeUnit.MINUTES)
+                .withTimeout(2, TimeUnit.MINUTES)
                 .withServerVariable("max_connect_errors", 666)
                 .withPort(port)
 

@@ -1,5 +1,5 @@
 # embedded-mysql-grails-plugin 
-[ ![Download](https://api.bintray.com/packages/purpleraven/plugins/embedded-mysql/images/download.svg?version=1.0) ](https://bintray.com/purpleraven/plugins/embedded-mysql/1.0/link)
+[ ![Download](https://api.bintray.com/packages/purpleraven/plugins/embedded-mysql/images/download.svg?version=1.1) ](https://bintray.com/purpleraven/plugins/embedded-mysql/1.1/link)
 
 Plugin replaces default embedded H2 datasource in awesome [Grails](http://grails.org) framework 
 to MySQL. Plugin uses already existing solution [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql). 
@@ -21,7 +21,7 @@ repositories {
 }
 ```
 ```groovy
-compile 'embedded.mysql:embedded-mysql:1.0'
+compile 'org.grails.plugins:embedded-mysql:1.1'
 ```
 In your ***application.yml*** change the dataSource settings to the next one:
 ```yaml
@@ -45,6 +45,7 @@ Plugin uses next parameters in DataSource section:
 | *url* | You can specify the url with any additional parameters, which MySQL understands | jdbc:mysql://localhost:<embeddedPort>/embedded_db |
 | *username* || embedded_db |
 | *password* || embedded_db |
+| *schema* || embedded_db |
 
 All other parameters common for the Grails Datasource configuration section are being used by grails dataSource plugin.
 For example, you can set
