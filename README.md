@@ -19,6 +19,11 @@ repositories {
         url  "https://dl.bintray.com/grails/plugins" 
     }
 }
+
+war {
+    rootSpec.exclude("**/wix-embedded-mysql*.jar")
+}
+
 ```
 ```groovy
 compile 'org.grails.plugins:embedded-mysql:1.1'
