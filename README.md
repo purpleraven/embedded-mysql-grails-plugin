@@ -62,3 +62,8 @@ In this case embedded MySQL will be created with connection pool in front of it.
 ## Acknowledgments
 
 * Great respect to the [wix-embedded-mysql](https://github.com/wix/wix-embedded-mysql) for Embedded MySQL implementation.
+
+## Known problems
+
+`apt install libaio1`
+'Stream closed':  `apt install libncurses5`
