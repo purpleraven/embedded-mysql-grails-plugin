@@ -15,19 +15,18 @@ To get started with the minimum of configuration start from the following:
 Add to your ***build.gradle***
 ```groovy
 repositories {
-    maven {
-        url  "https://dl.bintray.com/grails/plugins" 
-    }
+  ...
+  maven { url "http://dl.bintray.com/purpleraven/plugins" }
+  ...
 }
 
 war {
     rootSpec.exclude("**/wix-embedded-mysql*.jar")
 }
 
-```
-```groovy
 compile 'org.grails.plugins:embedded-mysql:1.1'
 ```
+
 In your ***application.yml*** change the dataSource settings to the next one:
 ```yaml
 dataSource:
